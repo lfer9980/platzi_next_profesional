@@ -1,13 +1,17 @@
 import '@/styles/tailwind.css';
+import MainLayout from '@/layouts/MainLayout';
 
 function MyApp({
   Component,
   pageProps,
 }) {
   return (
-    <Component
-      {...pageProps}
-    />
+    <MainLayout>
+      <Component
+        {...pageProps}
+      />
+    </MainLayout>
+
   );
 }
 
