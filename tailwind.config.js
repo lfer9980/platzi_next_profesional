@@ -8,6 +8,7 @@ module.exports = {
   theme: {
     colors: {
       ...colors,
+      red: '#4c0519',
     },
   },
 };

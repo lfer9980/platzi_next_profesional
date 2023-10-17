@@ -1,26 +1,45 @@
-import { useRef } from 'react';
+'use client'
+
+import { useRef, useState } from 'react';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
 
+  const router = useRouter();
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const auth = useAuth();
+
+  const [errorLogin, setErrorLogin] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handlerSubmit = (event) => {
     event.preventDefault();
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
 
+    setErrorLogin(null);
+    setLoading(true);
+
     auth.signIn(email, password)
       .then(() => {
-        console.log('login success')
+        console.log('login success');
+        router.push('/dashboard');
       })
       .catch((e) => {
         console.log('login failed')
         console.log(e)
+        if (e.response?.status === 401) {
+          setErrorLogin('Usuario o password incorrecto.');
+        } else if (e.request) {
+          setErrorLogin('Tenemos un problema');
+        } else {
+          setErrorLogin('Algo salió mal.');
+        }
+        setLoading(false);
       });
   };
 
@@ -36,11 +55,7 @@ export default function LoginPage() {
               alt="Workflow"
             />
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Sign
-              in
-              to
-              your
-              account
+              Sign in to your account
             </h2>
           </div>
           <form
@@ -60,8 +75,7 @@ export default function LoginPage() {
                   htmlFor="email-address"
                   className="sr-only"
                 >
-                  Email
-                  address
+                  Email address
                 </label>
                 <input
                   id="email-address"
@@ -97,6 +111,12 @@ export default function LoginPage() {
                 />
               </div>
             </div>
+
+            {errorLogin &&
+              <div>
+                <p className='red'>{errorLogin}</p>
+              </div>
+            }
 
             <div className="flex items-center justify-between">
               <div className="flex items-center">
